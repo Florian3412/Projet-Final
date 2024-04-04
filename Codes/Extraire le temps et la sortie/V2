@@ -1,0 +1,54 @@
+#include <SPIFFS.h>
+
+const char* fichier_local = "/fichier.csv";
+
+void setup() {
+  Serial.begin(115200);
+  
+  // Initialisation du système de fichiers SPIFFS
+  if(!SPIFFS.begin(true)){
+    Serial.println("Erreur lors de l'initialisation de SPIFFS");
+    return;
+  }
+
+  // Lecture et affichage des données du fichier CSV
+  afficherFichierCSV();
+}
+
+void afficherFichierCSV() {
+  File fichier_spiffs = SPIFFS.open(fichier_local, "r");
+  if(!fichier_spiffs) {
+    Serial.println("Erreur lors de l'ouverture du fichier sur SPIFFS pour la lecture");
+    return;
+  }
+  
+  // Lire et traiter le contenu du fichier ligne par ligne
+  while(fichier_spiffs.available()) {
+    String ligne = fichier_spiffs.readStringUntil('\n'); // Lire une ligne du fichier
+    
+    // Diviser la ligne en tokens séparés par des virgules
+    int debut = 0;
+    int fin = ligne.indexOf(',');
+    String token;
+    while (fin != -1) {
+      token = ligne.substring(debut, fin);
+      
+      // Si le token est différent de la première colonne (étiquette), on l'affiche
+      if (token != "valise") {
+        Serial.print(token);
+        Serial.print(" ");
+      }
+      
+      debut = fin + 1;
+      fin = ligne.indexOf(',', debut);
+    }
+    // Afficher le dernier token (pas de virgule après)
+    token = ligne.substring(debut);
+    Serial.println(token);
+  }
+  
+  fichier_spiffs.close();
+}
+
+void loop() {
+}
