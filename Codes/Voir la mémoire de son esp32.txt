@@ -1,0 +1,16 @@
+#include "esp_system.h"
+
+void setup() {
+  Serial.begin(115200);
+}
+
+void loop() {
+  // Lire la mémoire disponible
+  uint32_t free_memory = ESP.getFreeHeap();
+  
+  Serial.print("Mémoire disponible : ");
+  Serial.print(free_memory);
+  Serial.println(" octets");
+
+  delay(1000); // Attendre 1 seconde avant de répéter la lecture
+}
